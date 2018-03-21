@@ -18,21 +18,22 @@ It is called JSX, and it is a syntax extension to JavaScript. We recommend using
 
 JSX produces React "elements". We will explore rendering them to the DOM in the [next section](/docs/rendering-elements.html). Below, you can find the basics of JSX necessary to get you started.
 
-### Why JSX?
+### Tại sao lại dùng JSX?
 
-React embraces the fact that rendering logic is inherently coupled with other UI logic: how events are handled, how the state changes over time, and how the data is prepared for display.
+React embraces the fact that rendering logic is inherently coupled with other UI logic: 
+- cách các event được xử lý
+- cách mà các states thay đổi theo thời gian
+- cách mà dữ liệu được chuẩn bị để hiển thị sau đó.
 
-Instead of artificially separating *technologies* by putting markup and logic in separate files, React [separates *concerns*](https://en.wikipedia.org/wiki/Separation_of_concerns) with loosely coupled units called "components" that contain both. We will come back to components in a [further section](/docs/components-and-props.html), but if you're not yet comfortable putting markup in JS, [this talk](https://www.youtube.com/watch?v=x7cQ3mrcKaY) might convince you otherwise.
+Thay vì phân tách phần markup và logic trong những file riêng biệt, React [biệt lập các *vấn đề*](https://en.wikipedia.org/wiki/Separation_of_concerns) thông qua các đơn vị gắn kết lỏng lẻo được gọi là "component", mỗi component chứa cả phần logic lẫn markup. We will come back to components in a [further section](/docs/components-and-props.html), but if you're not yet comfortable putting markup in JS, [this talk](https://www.youtube.com/watch?v=x7cQ3mrcKaY) might convince you otherwise.
 
-React [doesn't require](/docs/react-without-jsx.html) using JSX, but most people find it helpful as a visual aid when working with UI inside the JavaScript code. It also allows React to show more useful error and warning messages.
+React [không bắt buộc](/docs/react-without-jsx.html) việc sử dụng JSX, nhưng hầu hết người dùng thấy sự hợp lý của nó khi làm việc với UI bên trong code JavaScript. Nó cũng cho phép React hiển thị nhiều thông báo lỗi cũng như cảnh báo chứa nội dung hữu ích.
 
-With that out of the way, let's get started!
+### Nhúng khai báo trong JSX
 
-### Embedding Expressions in JSX
+Bạn có thể nhúng bất kỳ [khai báo JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#Expressions) nào vào JSX bằng cách đặt nó vào giữa hai ngoặc nhọn.
 
-You can embed any [JavaScript expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#Expressions) in JSX by wrapping it in curly braces.
-
-For example, `2 + 2`, `user.firstName`, and `formatName(user)` are all valid expressions:
+Những đoạn khai báo hợp lệ có thể là: `2 + 2`, `user.firstName`, và `formatName(user)`:
 
 ```js{12}
 function formatName(user) {
@@ -58,13 +59,13 @@ ReactDOM.render(
 
 [](codepen://introducing-jsx).
 
-We split JSX over multiple lines for readability. While it isn't required, when doing this, we also recommend wrapping it in parentheses to avoid the pitfalls of [automatic semicolon insertion](http://stackoverflow.com/q/2846283).
+Chúng ta chia JSX thành nhiều dòng để cho dễ đọc. Tất nhiên là điều này không bắt buộc, chúng tôi khuyến cáo nên đóng ngoặc đoạn JSX để tránh lỗi xay ra do [dấu chấm phẩy được tự động thêm vào](http://stackoverflow.com/q/2846283).
 
-### JSX is an Expression Too
+### Bản thân JSX cũng là một khai báo
 
 After compilation, JSX expressions become regular JavaScript function calls and evaluate to JavaScript objects.
 
-This means that you can use JSX inside of `if` statements and `for` loops, assign it to variables, accept it as arguments, and return it from functions:
+Điều này có nghĩa là ta có thể dùng JSX bên trong `if` statement và vòng lặp `for`, gán nó cho cho biết, sử dụng như tham số, và trả về từ hàm:
 
 ```js{3,5}
 function getGreeting(user) {
@@ -75,7 +76,7 @@ function getGreeting(user) {
 }
 ```
 
-### Specifying Attributes with JSX
+### Đặt Attributes với JSX
 
 You may use quotes to specify string literals as attributes:
 

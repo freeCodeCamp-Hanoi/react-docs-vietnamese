@@ -7,41 +7,37 @@ prev: introducing-jsx.html
 next: components-and-props.html
 ---
 
-Elements are the smallest building blocks of React apps.
-
-An element describes what you want to see on the screen:
+Hãy tưởng tượng "element" là những viên gạch nhỏ nhất để xây dựng một ứng dụng React. Mỗi viên gạch "element" sẽ mô tả những gì mà ta muốn nhìn thấy trên màn hình:
 
 ```js
 const element = <h1>Hello, world</h1>;
 ```
 
-Unlike browser DOM elements, React elements are plain objects, and are cheap to create. React DOM takes care of updating the DOM to match the React elements.
+Không giống như DOM element của trình duyệt, mỗi React element là một object thuần, và có thể được tạo ra rất dễ dàng. React DOM sẽ chịu trách nhiệm cập nhật DOM sao cho đồng nhất với các React elements.
 
->**Note:**
+>**Lưu ý:**
 >
->One might confuse elements with a more widely known concept of "components". We will introduce components in the [next section](/docs/components-and-props.html). Elements are what components are "made of", and we encourage you to read this section before jumping ahead.
+>Còn một khái niệm được biết rộng rãi khác tên là "component", nhưng khái niệm này lại dễ gây nhầm lẫn với element. Chúng ta sẽ trình bày về component trong [mục tiếp theo](/docs/components-and-props.html). Elements là thứ ghép lại và tạo ra components, chúng tôi khuyên bạn nên đọc xong phần này trước khi nhảy cóc sang các chương sau.
 
-## Rendering an Element into the DOM
+## Render một Element vào DOM
 
-Let's say there is a `<div>` somewhere in your HTML file:
+Giả sử có một thẻ `<div>` trong file HTML:
 
 ```html
 <div id="root"></div>
 ```
 
-We call this a "root" DOM node because everything inside it will be managed by React DOM.
+Thẻ `<div>` này có `id` là "root", ta gọi nó là nút DOM "gốc" bởi mọi thứ bên trong thẻ đó sẽ do React DOM quản lý. 
 
-Applications built with just React usually have a single root DOM node. If you are integrating React into an existing app, you may have as many isolated root DOM nodes as you like.
+Các ứng dụng xây dựng bởi React thường có 1 nút DOM gốc duy nhất. Nếu bạn đang tích hợp React vào 1 ứng dụng có sẵn, bạn có thể sẽ phải tìm cách cô lập các nút DOM gốc này.
 
-To render a React element into a root DOM node, pass both to `ReactDOM.render()`:
+Để render một React element vào một nút DOM góc, hãy truyền element đó cho `ReactDOM.render()`:
 
-`embed:rendering-elements/render-an-element.js`
-
-[](codepen://rendering-elements/render-an-element)
+`embed:rendering-elements/render-an-element.js`[](codepen://rendering-elements/render-an-element)
 
 It displays "Hello, world" on the page.
 
-## Updating the Rendered Element
+## Cập nhật Element đã được render trước đó
 
 React elements are [immutable](https://en.wikipedia.org/wiki/Immutable_object). Once you create an element, you can't change its children or attributes. An element is like a single frame in a movie: it represents the UI at a certain point in time.
 

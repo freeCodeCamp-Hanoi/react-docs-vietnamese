@@ -8,17 +8,17 @@ redirect_from:
 prev: composition-vs-inheritance.html
 ---
 
-React is, in our opinion, the premier way to build big, fast Web apps with JavaScript. It has scaled very well for us at Facebook and Instagram.
+Theo quan điểm của chúng tôi, React là một cách thượng hạng để xây dựng một ứng dụng Web vừa lớn, vừa nhanh với JavaScript. Cách này đã giúp mở rộng ứng dụng rất tốt khi dùng cho Facebook và Instagram.
 
-One of the many great parts of React is how it makes you think about apps as you build them. In this document, we'll walk you through the thought process of building a searchable product data table using React.
+Một trong những phần tuyệt vời nhất của React là việc nó khiến ta nghĩ về ứng dụng khi ta xây dựng nó. Phần tài liệu này sẽ nói về "quy trình tư duy" để xây dựng một bảng dữ liệu chứa thông tin sản phẩm mà có thể tìm kiếm được bằng React. 
 
-## Start With A Mock
+## Bắt đầu với một bản phác thảo
 
-Imagine that we already have a JSON API and a mock from our designer. The mock looks like this:
+Tưởng tượng chúng ta đã có sẵn một API trả về JSON, cũng như bản phác thảo từ người đồng nghiệp làm thiết kế. Bản phác thảo trông giống như dưới đây:
 
 ![Mockup](../images/blog/thinking-in-react-mock.png)
 
-Our JSON API returns some data that looks like this:
+Còn API sẽ trả về dữ liệu dạng JSON giống như sau:
 
 ```
 [
@@ -31,27 +31,27 @@ Our JSON API returns some data that looks like this:
 ];
 ```
 
-## Step 1: Break The UI Into A Component Hierarchy
+## Bước 1: Chia nhỏ phần UI (Giao diện người dùng) thành một cây chứa các các component
 
-The first thing you'll want to do is to draw boxes around every component (and subcomponent) in the mock and give them all names. If you're working with a designer, they may have already done this, so go talk to them! Their Photoshop layer names may end up being the names of your React components!
+Điều cần làm đầu tiên là vẽ khoanh những hình chữ nhật xung quanh mỗi mục (và mục con) trong bản phác thảo, cho mỗi mục một cái tên. Nếu bạn làm việc với một thiết kế đồ họa, thì khả năng cậu ta đã làm việc này rồi thông qua việc đặt tên các layers trong file Photoshop. Tên của các layer có thể cho thành tên của các React component! 
 
-But how do you know what should be its own component? Just use the same techniques for deciding if you should create a new function or object. One such technique is the [single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle), that is, a component should ideally only do one thing. If it ends up growing, it should be decomposed into smaller subcomponents.
+Nhưng làm thế nào để biết mỗi component nên có gì bên trong? Hãy sử dụng kỹ thuật tương tự khi tạo một hàm mới hoặc một object mới, kỹ thuật này tên là [nguyên lý trách nhiệm đơn - single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle), nghĩa là, mỗi một component chỉ để làm một việc. Nếu việc này lớn, thì hãy chia nhỏ component thành những component nhỏ hơn.
 
-Since you're often displaying a JSON data model to a user, you'll find that if your model was built correctly, your UI (and therefore your component structure) will map nicely. That's because UI and data models tend to adhere to the same *information architecture*, which means the work of separating your UI into components is often trivial. Just break it up into components that represent exactly one piece of your data model.
+Bởi bạn thường dùng dữ liệu dạng JSON, bạn sẽ thất nếu dữ liệu được cấu trúc chuẩn xác, thì giao diện (và cấu trúc component) cũng sẽ được phản ánh tương tự. Lý do? Bởi UI và mô hình dữ liệu có xu hướng dùng chung một "kiến trúc thông tin", tức là việc chia giao diện ra thành các components thường không quá quan trọng. Chỉ cần chia nó thành các phần tương ứng với những mục trong mô hình dữ liệu.
 
 ![Component diagram](../images/blog/thinking-in-react-components.png)
 
-You'll see here that we have five components in our simple app. We've italicized the data each component represents.
+Như thấy ở hình trên, ta sẽ có 5 components trong ứng dụng đơn giản này, bao gồm:
 
-  1. **`FilterableProductTable` (orange):** contains the entirety of the example
-  2. **`SearchBar` (blue):** receives all *user input*
-  3. **`ProductTable` (green):** displays and filters the *data collection* based on *user input*
-  4. **`ProductCategoryRow` (turquoise):** displays a heading for each *category*
-  5. **`ProductRow` (red):** displays a row for each *product*
+  1. **`FilterableProductTable` (màu da cam):** chứa toàn bộ ứng dụng
+  2. **`SearchBar` (xanh nước biển):** nhận phần *nhập liệu của người dùng*
+  3. **`ProductTable` (xanh lá cây):** hiển thị và lọc *dữ liệu* dựa trên *những gì người dùng nhập vào*
+  4. **`ProductCategoryRow` (xanh ngọc lam):** hiển thị tiêu đề cho mỗi *mục*
+  5. **`ProductRow` (màu đỏ):** hiển thị mỗi *sản phẩm* trong 1 dòng
 
-If you look at `ProductTable`, you'll see that the table header (containing the "Name" and "Price" labels) isn't its own component. This is a matter of preference, and there's an argument to be made either way. For this example, we left it as part of `ProductTable` because it is part of rendering the *data collection* which is `ProductTable`'s responsibility. However, if this header grows to be complex (i.e. if we were to add affordances for sorting), it would certainly make sense to make this its own `ProductTableHeader` component.
+Khi nhìn vào `ProductTable`, bạn sẽ thế phần tiêu đề của bảng (chứa mục "Name" và "Price")không được cho vào 1 component riêng. Đây đơn thuần là sở thích riêng, và có những người muốn tạo component. For this example, we left it as part of `ProductTable` because it is part of rendering the *data collection* which is `ProductTable`'s responsibility. However, if this header grows to be complex (i.e. if we were to add affordances for sorting), it would certainly make sense to make this its own `ProductTableHeader` component.
 
-Now that we've identified the components in our mock, let's arrange them into a hierarchy. This is easy. Components that appear within another component in the mock should appear as a child in the hierarchy:
+Sau khi đã xác định được các components trong bản phác thảo, việc cần làm tiếp là sắp xếp components đó vào trong 1 một cấu trúc hình cây. Việc này thì đơn giản, component nào xuất hiện bên trong component khác trong bản phác thảo, thì sẽ là component "con" trong cấu trúc hình cây:
 
   * `FilterableProductTable`
     * `SearchBar`
@@ -59,24 +59,24 @@ Now that we've identified the components in our mock, let's arrange them into a 
       * `ProductCategoryRow`
       * `ProductRow`
 
-## Step 2: Build A Static Version in React
+## Bước 2: Xây dựng một phiên bản tĩnh cho ứng dụng trong React
 
-<p data-height="600" data-theme-id="0" data-slug-hash="BwWzwm" data-default-tab="js" data-user="lacker" data-embed-version="2" class="codepen">See the Pen <a href="https://codepen.io/gaearon/pen/BwWzwm">Thinking In React: Step 2</a> on <a href="http://codepen.io">CodePen</a>.</p>
+<p data-height="600" data-theme-id="0" data-slug-hash="BwWzwm" data-default-tab="js" data-user="lacker" data-embed-version="2" class="codepen">Xem code mẫu <a href="https://codepen.io/gaearon/pen/BwWzwm">Tư duy trong React: Bước 2</a> ở <a href="http://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
-Now that you have your component hierarchy, it's time to implement your app. The easiest way is to build a version that takes your data model and renders the UI but has no interactivity. It's best to decouple these processes because building a static version requires a lot of typing and no thinking, and adding interactivity requires a lot of thinking and not a lot of typing. We'll see why.
+Sau khi đã có danh sách các component dạng cấu trúc hình cây, giờ là lúc bắt tay vào code. Cách dễ nhất là xây dựng một phiên bản có thể nhận dữ liệu và render ra UI nhưng không có tính tương tác. Tốt nhất là tách rời các quá trình này bởi một phiên bản "tĩnh" cần gõ rất nhiều mà không cần nghĩ, trong khi thêm tính tương tác sẽ đòi hỏi nghĩ nhiều mà không gõ mấy. Ta sẽ xem lý do tại sao.
 
-To build a static version of your app that renders your data model, you'll want to build components that reuse other components and pass data using *props*. *props* are a way of passing data from parent to child. If you're familiar with the concept of *state*, **don't use state at all** to build this static version. State is reserved only for interactivity, that is, data that changes over time. Since this is a static version of the app, you don't need it.
+Để xây một phiên bản tĩnh của ứng dụng có thể render từ dữ liệu, bạn sẽ muốn tạo các component có thể tái sử dụng từ các component khác, và truyền dữ liệu thông qua *props*. *props* là một cách để truyền dữ liệu từ cấp trên xuống cấp dưới. Nếu bạn đã quen với *state*, **hãy đừng dùng bất kỳ state nào** trong lúc làm phiên bản tĩnh. State chỉ dành cho các tính năng tương tại, tức là khi dữ liệu có thay đổi qua thời gian. Vì đây chỉ là phiên bản tĩnh nên bạn sẽ không cần đến nó.
 
-You can build top-down or bottom-up. That is, you can either start with building the components higher up in the hierarchy (i.e. starting with `FilterableProductTable`) or with the ones lower in it (`ProductRow`). In simpler examples, it's usually easier to go top-down, and on larger projects, it's easier to go bottom-up and write tests as you build.
+Bạn có thể xây từ trên xuống, hoặc từ dưới lên. Nghĩa là, bạn có thể bắt đầu code với component ở cấp cao nhất trong danh sách (trong ví dụ này là `FilterableProductTable`) hoặc thấp nhất (chính là `ProductRow`). Trong các bài toán đơn giản, sẽ dễ hơn khi đi từ trên xuống, còn với dự án lớn, sẽ dễ hơn khi đi từ dưới lên và viết test cho từng component.
 
-At the end of this step, you'll have a library of reusable components that render your data model. The components will only have `render()` methods since this is a static version of your app. The component at the top of the hierarchy (`FilterableProductTable`) will take your data model as a prop. If you make a change to your underlying data model and call `ReactDOM.render()` again, the UI will be updated. It's easy to see how your UI is updated and where to make changes since there's nothing complicated going on. React's **one-way data flow** (also called *one-way binding*) keeps everything modular and fast.
+Khi kết thúc bước này, bạn sẽ có một thư viện chứa các components có thể tái sử dụng, dùng vào việc render UI từ dữ liệu truyền vào. Các components sẽ chỉ có method `render()` bởi đây là phiên bản tĩnh. Component ở cấp cao nhất (`FilterableProductTable`) sẽ nhận dữ liệu truyền vào dưới dạng prop. Nếu có thay đổi với dữ liệu, gọi lại hàm `ReactDOM.render()`, và rồi giao diện sẽ được cập nhật. Rất dễ để quan sát cách UI được cập nhật, và nơi để tạo ra sự thay đổi bởi không có gì phức tạp. React có **luồng dữ liệu 1 chiều** (còn gọi là *one-way binding*) giúp mọi thứ gọn ghẽ và chạy nhanh.
 
 Simply refer to the [React docs](/docs/) if you need help executing this step.
 
-### A Brief Interlude: Props vs State
+### Giai lao giữa giờ: Props so với State
 
-There are two types of "model" data in React: props and state. It's important to understand the distinction between the two; skim [the official React docs](/docs/interactivity-and-dynamic-uis.html) if you aren't sure what the difference is.
+Có hai dạng "model" data trong React: props và state. Việc hiểu rõ sự khác biệt giữa hai mô hình này vô cùng quan trọng; hãy đọc lại [tài liệu chính thức của React](/docs/interactivity-and-dynamic-uis.html) nếu bạn không chắc chắn hai mô hình này khác nhau ở đâu.
 
 ## Step 3: Identify The Minimal (but complete) Representation Of UI State
 
