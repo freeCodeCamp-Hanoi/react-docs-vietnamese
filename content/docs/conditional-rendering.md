@@ -7,11 +7,13 @@ next: lists-and-keys.html
 redirect_from: "tips/false-in-jsx.html"
 ---
 
-In React, you can create distinct components that encapsulate behavior you need. Then, you can render only some of them, depending on the state of your application.
+# Conditonal Rendering
 
-Conditional rendering in React works the same way conditions work in JavaScript. Use JavaScript operators like [`if`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else) or the [conditional operator](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) to create elements representing the current state, and let React update the UI to match them.
+Trong React, bạn có thể tạo một vài component riêng chỉ để xử lý những gì bạn cần. Sau đó, chỉ redner một trong số những component đó tùy thuộc vào state của ứng dụng.
 
-Consider these two components:
+Việc render có điều kiện trong React giống hệt như trong JavaScript. Sử dụng toán tử của JavaScript như [`if`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else) hoặc [toán tử điều kiện](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) để tạo element dựa trên state hiện tại, và để React cập nhật UI cho khớp.
+
+Hãy quan sát hai component sau:
 
 ```js
 function UserGreeting(props) {
@@ -23,7 +25,7 @@ function GuestGreeting(props) {
 }
 ```
 
-We'll create a `Greeting` component that displays either of these components depending on whether a user is logged in:
+Chúng ta sẽ tạo ra một component `Greeting` để gọi đến một trong 2 component kia tùy theo việc user có đang login hay không:
 
 ```javascript{3-7,11,12}
 function Greeting(props) {
@@ -41,15 +43,15 @@ ReactDOM.render(
 );
 ```
 
-[Try it on CodePen.](https://codepen.io/gaearon/pen/ZpVxNq?editors=0011)
+[Thử trên CodePen.](https://codepen.io/gaearon/pen/ZpVxNq?editors=0011)
 
-This example renders a different greeting depending on the value of `isLoggedIn` prop.
+Đoạn code trên sẽ render các câu chào khác nhau dựa trên giá trị của prop `isLoggedIn`.
 
-### Element Variables
+### Đặt element như variable
 
-You can use variables to store elements. This can help you conditionally render a part of the component while the rest of the output doesn't change.
+Bạn có thể sử dụng variable để lưu element. Việc này sẽ giúp render theo điều kiện một phần của component trong khi phần còn lại của kết quả trả về không thay đổi.
 
-Consider these two new components representing Logout and Login buttons:
+Xem hai component dưới đây, ứng với nút Logout và Login:
 
 ```js
 function LoginButton(props) {
@@ -69,9 +71,9 @@ function LogoutButton(props) {
 }
 ```
 
-In the example below, we will create a [stateful component](/docs/state-and-lifecycle.html#adding-local-state-to-a-class) called `LoginControl`.
+Trong ví dụ này, ta sẽ tạo một [component có state](/docs/state-and-lifecycle.html#adding-local-state-to-a-class) được gọi là `LoginControl`.
 
-It will render either `<LoginButton />` or `<LogoutButton />` depending on its current state. It will also render a `<Greeting />` from the previous example:
+Nó sẽ render hoặc `<LoginButton />` hoặc `<LogoutButton />` phụ thuộc vào giá trị hiện tại của state. Nó cũng render `<Greeting />` như từ ví dụ trước:
 
 ```javascript{20-25,29,30}
 class LoginControl extends React.Component {
@@ -115,9 +117,9 @@ ReactDOM.render(
 );
 ```
 
-[Try it on CodePen.](https://codepen.io/gaearon/pen/QKzAgB?editors=0010)
+[Thử  trên CodePen.](https://codepen.io/gaearon/pen/QKzAgB?editors=0010)
 
-While declaring a variable and using an `if` statement is a fine way to conditionally render a component, sometimes you might want to use a shorter syntax. There are a few ways to inline conditions in JSX, explained below.
+Tuy khai báo biến và dùng `if` là một cách tốt để render component có điều kiện, có thể có lúc bạn muốn sử dụng cú pháp nào ngắn gọn hơn. Có một vài cách để viết câu điều kiện trong một dòng trong JSX, được giải thích như bên dưới.
 
 ### Inline If with Logical && Operator
 

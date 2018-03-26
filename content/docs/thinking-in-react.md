@@ -78,56 +78,67 @@ Simply refer to the [React docs](/docs/) if you need help executing this step.
 
 Có hai dạng "model" data trong React: props và state. Việc hiểu rõ sự khác biệt giữa hai mô hình này vô cùng quan trọng; hãy đọc lại [tài liệu chính thức của React](/docs/interactivity-and-dynamic-uis.html) nếu bạn không chắc chắn hai mô hình này khác nhau ở đâu.
 
-## Step 3: Identify The Minimal (but complete) Representation Of UI State
+## Bước 3: Xác định  The Minimal (but complete) Representation Of UI State
 
-To make your UI interactive, you need to be able to trigger changes to your underlying data model. React makes this easy with **state**.
+Để tạo ra sự tương tác cho trang web, ta cần có khả năng lan truyền những thay đổi đến tầng data model bên dưới. React giúp làm việc này dễ dàng với **state**.
 
-To build your app correctly, you first need to think of the minimal set of mutable state that your app needs. The key here is [DRY: *Don't Repeat Yourself*](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). Figure out the absolute minimal representation of the state your application needs and compute everything else you need on-demand. For example, if you're building a TODO list, just keep an array of the TODO items around; don't keep a separate state variable for the count. Instead, when you want to render the TODO count, simply take the length of the TODO items array.
+Trong khi tạo ứng dụng, ta cần nghĩ là ứng dụng sẽ cần thay đổi những state nào, và cố gắng sao cho số state ấy là tối thiểu. Điểm mấu chốt ở đây là: [DRY: *Don't Repeat Yourself*](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). Figure out the absolute minimal representation of the state your application needs and compute everything else you need on-demand. For example, if you're building a TODO list, just keep an array of the TODO items around; don't keep a separate state variable for the count. Instead, when you want to render the TODO count, simply take the length of the TODO items array.
 
-Think of all of the pieces of data in our example application. We have:
+Với ứng dụng đang làm ở các bước trên, các "mảnh dữ liệu" mà ta cần tính đến là: 
+  * Danh sách gốc chứa các sản phẩm
+  * Đoạn text mà user nhập vào để tìm kiếm
+  * Giá trị của checkbox
+  * Danh sách đã được lọc chứa các sản phẩm
 
-  * The original list of products
-  * The search text the user has entered
-  * The value of the checkbox
-  * The filtered list of products
+Ta cần đi qua từng dữ liệu, quyết định xem cái nào là state nhờ 3 câu hỏi sau:
 
-Let's go through each one and figure out which one is state. Simply ask three questions about each piece of data:
+  1. Dữ liệu này có được truyền xuống từ component cha thông qua props? Nếu đúng, thì đây không phải là state..
+  2. Dữ liệu này trước sau không đổi? Nếu đúng, vậy thì đây không phải là state.
+  3. Dữ liệu này có thể tính dựa vào state khác hoặc props trong component? Nếu đúng, đây không phải là state.
 
-  1. Is it passed in from a parent via props? If so, it probably isn't state.
-  2. Does it remain unchanged over time? If so, it probably isn't state.
-  3. Can you compute it based on any other state or props in your component? If so, it isn't state.
+Đối chiếu với dữ liệu trên, ta có bảng sau:
 
-The original list of products is passed in as props, so that's not state. The search text and the checkbox seem to be state since they change over time and can't be computed from anything. And finally, the filtered list of products isn't state because it can be computed by combining the original list of products with the search text and value of the checkbox.
+|#  |Dữ liệu | Được truyền từ cha? | Trước sau không đổi? | Tính dựa vào state / prop khác? 
+|---|---      |---                |---                    |---                              |
+|1 | Danh sách sản phẩm gốc | Đúng  |-                    |-                                |
+|2  | Text user nhập vào ô tìm kiếm | Không | Không | Không |
+|3  | Giá trị checkbox  | Không | Không | Không |
+|4  | Danh sách sản phẩm đã được lọc  | Không | Không | Đúng |
 
-So finally, our state is:
+Ghi chú: Danh sánh sản phẩm đã được lọc có thể tính nhờ vào 3 dữ liệu trên.
 
-  * The search text the user has entered
-  * The value of the checkbox
+Như vậy, danh sách state bao gồm:
 
-## Step 4: Identify Where Your State Should Live
+  * Đoạn text mà người dùng nhập vào để tìm kiếm
+  * Giá trị của ô checkbox
+
+## Bước 4: Xác định nơi chứa State
 
 <p data-height="600" data-theme-id="0" data-slug-hash="qPrNQZ" data-default-tab="js" data-user="lacker" data-embed-version="2" class="codepen">See the Pen <a href="https://codepen.io/gaearon/pen/qPrNQZ">Thinking In React: Step 4</a> on <a href="http://codepen.io">CodePen</a>.</p>
 
-OK, so we've identified what the minimal set of app state is. Next, we need to identify which component mutates, or *owns*, this state.
+OK, ta đã có được danh sách (tối thiểu) của state trong app. Giờ phải xác định xem component nào sẽ cần những state này.
 
-Remember: React is all about one-way data flow down the component hierarchy. It may not be immediately clear which component should own what state. **This is often the most challenging part for newcomers to understand,** so follow these steps to figure it out:
+Lưu ý: React hoàn toàn chỉ có luồng dữ liệu một chiều chảy theo các nhánh của cây component. Và không dễ để xác định xem component nào cần state nào. **Đây thường là thử thách lớn nhất với người mới,** vì thế để hiểu, hãy làm theo các bước sau:
 
-For each piece of state in your application:
+Đối với mỗi state trong ứng dụng:
 
-  * Identify every component that renders something based on that state.
-  * Find a common owner component (a single component above all the components that need the state in the hierarchy).
-  * Either the common owner or another component higher up in the hierarchy should own the state.
-  * If you can't find a component where it makes sense to own the state, create a new component simply for holding the state and add it somewhere in the hierarchy above the common owner component.
+  * Kiểm tra tất các component, nhưng cái nào render thứ gì đó dựa trên state.
+  * Tìm một component chung (component này cần state, và đứng trên những component còn lại trong cây cấu trúc component).  
+  * Hoặc là component sở hữu state, hoặc component cao hơn nó một bậc.
+  * Nếu không thể tìm thất một component nào hợp lý để sở hữu state, hãy tạo 1 component mới chỉ để chứa state, và đặt nó chỗ nào đấy phía trên component sở hữu.
 
-Let's run through this strategy for our application:
+Áp dụng điều trên vào app đang làm:
 
-  * `ProductTable` needs to filter the product list based on state and `SearchBar` needs to display the search text and checked state.
-  * The common owner component is `FilterableProductTable`.
-  * It conceptually makes sense for the filter text and checked value to live in `FilterableProductTable`
+  * `ProductTable` cần lọc danh sách sản phẩm dựa vào state, và `SearchBar` cần hiển thị ô tìm kiếm và trạng thái của checkbox.
+  * Component sở hữu chung là `FilterableProductTable`.
+  * State "text tìm kiếm" và "giá trị của ô checkobx" thuộc về `FilterableProductTable` có vẻ hợp lý.
 
-Cool, so we've decided that our state lives in `FilterableProductTable`. First, add an instance property `this.state = {filterText: '', inStockOnly: false}` to `FilterableProductTable`'s `constructor` to reflect the initial state of your application. Then, pass `filterText` and `inStockOnly` to `ProductTable` and `SearchBar` as a prop. Finally, use these props to filter the rows in `ProductTable` and set the values of the form fields in `SearchBar`.
+Chuẩn, vậy ta quyết định state sẽ nằm trong `FilterableProductTable`.
+- Đầu tiên, thêm 1 instance property `this.state = {filterText: '', inStockOnly: false}` vào constructor của  `FilterableProductTable` để thiết lập giá trị ban đầu của state của ứng dụng. 
+- Sau đó, truyền `filterText` và `inStockOnly` vào `ProductTable` và `SearchBar` như props. 
+- Cuối cùng, sử dụng những props này để lọc hàng trong `ProductTable`, và điền giá trị và các filed trong form của `SearchBar`.
 
-You can start seeing how your application will behave: set `filterText` to `"ball"` and refresh your app. You'll see that the data table is updated correctly.
+Giờ ta có thể bắt đầu thấy cách mà ứng dụng sẽ làm việc: điền `"ball"` vào `filterText`, rồi refresh app, bảng dữ liệu sẽ được cập nhật, chỉ chứa những sản phẩm có chữ "ball".
 
 ## Step 5: Add Inverse Data Flow
 
@@ -145,4 +156,4 @@ Though this sounds complex, it's really just a few lines of code. And it's reall
 
 ## And That's It
 
-Hopefully, this gives you an idea of how to think about building components and applications with React. While it may be a little more typing than you're used to, remember that code is read far more than it's written, and it's extremely easy to read this modular, explicit code. As you start to build large libraries of components, you'll appreciate this explicitness and modularity, and with code reuse, your lines of code will start to shrink. :)
+Hy vọng là bài viết này đã cho bạn vài ý tưởng về cách tư duy, làm thế nào đê dựng component và ứng dụng trong React. Dẫu code viết ra trông có vẻ dài dòng (hơn những gì bạn vẫn thường làm), thì hãy nhớ là ta đọc code nhiều hơn viết code rất nhiều. Và code viết một cách tường minh, theo module, sẽ khiến cho việc đọc code dễ dàng hơn. Một khi bạn bắt đầu xây dựng những thư viện lớn với nhiều component, bạn sẽ thấy trân trọng tính module và sự tường minh nói trên; với việc tái sử dụng code, số dòng code của bạn sẽ bắt đầu ít đi.

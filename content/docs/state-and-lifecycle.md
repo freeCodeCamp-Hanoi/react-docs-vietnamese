@@ -7,6 +7,8 @@ prev: components-and-props.html
 next: handling-events.html
 ---
 
+# State and Lifecycle
+
 Hãy nhớ về ví dụ về chiếc đồng hồ có nhảy theo giây từ [một chương trước](/docs/rendering-elements.html#updating-the-rendered-element).
 
 Cho đến bây giờ, chúng ta mới chỉ học một cách để cập nhật UI, đó là gọi `ReactDOM.render()` để thay đổi kết quả render:
