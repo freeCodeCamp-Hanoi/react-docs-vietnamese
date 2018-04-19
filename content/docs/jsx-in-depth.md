@@ -13,7 +13,7 @@ redirect_from:
   - "docs/jsx-in-depth-ko-KR.html"
 ---
 
-Fundamentally, JSX just provides syntactic sugar for the `React.createElement(component, props, ...children)` function. The JSX code:
+Về cơ bản, JSX chỉ đơn thuần là cú pháp viết tắt thay của hàm `React.createElement(component, props, ...children)`. Với code JSX như dưới đây:
 
 ```js
 <MyButton color="blue" shadowSize={2}>
@@ -21,7 +21,7 @@ Fundamentally, JSX just provides syntactic sugar for the `React.createElement(co
 </MyButton>
 ```
 
-compiles into:
+sẽ được biên dịch thành:
 
 ```js
 React.createElement(
@@ -31,13 +31,13 @@ React.createElement(
 )
 ```
 
-You can also use the self-closing form of the tag if there are no children. So:
+Ta cũng có thể dùng cách viết kiểu thẻ đóng như sau:
 
 ```js
 <div className="sidebar" />
 ```
 
-compiles into:
+đoạn trên sẽ được biên dịch thành:
 
 ```js
 React.createElement(
@@ -47,19 +47,19 @@ React.createElement(
 )
 ```
 
-If you want to test out how some specific JSX is converted into JavaScript, you can try out [the online Babel compiler](babel://jsx-simple-example).
+Muốn biết một đoạn JSX nào đó khi chuyển thành JavaScript sẽ như thế nào? Xem [công cụ của Babel ở đây](babel://jsx-simple-example).
 
-## Specifying The React Element Type
+## Xác định rõ "loại (type)" của element
 
-The first part of a JSX tag determines the type of the React element.
+Điều đầu tiên khi viết JSX là chỉ rõ React element thuộc loại nào.
 
 Capitalized types indicate that the JSX tag is referring to a React component. These tags get compiled into a direct reference to the named variable, so if you use the JSX `<Foo />` expression, `Foo` must be in scope.
 
 ### React Must Be in Scope
 
-Since JSX compiles into calls to `React.createElement`, the `React` library must also always be in scope from your JSX code.
+Bởi khi biên dịch JSX luôn gọi đến hàm `React.createElement`, cho nên thư viện `React` luôn cần được nhúng vào nơi nào dùng JSX.
 
-For example, both of the imports are necessary in this code, even though `React` and `CustomButton` are not directly referenced from JavaScript:
+Ví dụ, cả hai lệnh "import" sau đều cần thiết trong đoạn code, cho dù `React` và `CustomButton` không được tham chiếu trực tiếp từ JavaScript:
 
 ```js{1,2,5}
 import React from 'react';
@@ -71,7 +71,7 @@ function WarningButton() {
 }
 ```
 
-If you don't use a JavaScript bundler and loaded React from a `<script>` tag, it is already in scope as the `React` global.
+Nếu không sử dụng một JavaScript bundler nào đó, và gọi React trực tiếp từ một thẻ `<script>`, it is already in scope as the `React` global.
 
 ### Using Dot Notation for JSX Type
 
@@ -91,7 +91,7 @@ function BlueDatePicker() {
 }
 ```
 
-### User-Defined Components Must Be Capitalized
+### Viết hoa chữ cái đầu tiên của tên component do người dùng tự định nghĩa
 
 When an element type starts with a lowercase letter, it refers to a built-in component like `<div>` or `<span>` and results in a string `'div'` or `'span'` passed to `React.createElement`. Types that start with a capital letter like `<Foo />` compile to `React.createElement(Foo)` and correspond to a component defined or imported in your JavaScript file.
 
@@ -168,21 +168,21 @@ function Story(props) {
 }
 ```
 
-## Props in JSX
+## Props bên trong JSX
 
-There are several different ways to specify props in JSX.
+Có vài cách trình bày dưới đây để truyền props vào JSX.
 
-### JavaScript Expressions as Props
+### Props có thể là Expression của JavaScript
 
-You can pass any JavaScript expression as a prop, by surrounding it with `{}`. For example, in this JSX:
+Ta có thể truyền cho props bất kỳ expression nào của JavaScript, miễn là bọc nó trong ngoặc nhọn `{}`. Ví dụ:
 
 ```js
 <MyComponent foo={1 + 2 + 3 + 4} />
 ```
 
-For `MyComponent`, the value of `props.foo` will be `10` because the expression `1 + 2 + 3 + 4` gets evaluated.
+Với component `MyComponent`, giá trị của `props.foo` sẽ là `10`, bởi expression `1 + 2 + 3 + 4` nhận giá trị bằng 10.
 
-`if` statements and `for` loops are not expressions in JavaScript, so they can't be used in JSX directly. Instead, you can put these in the surrounding code. For example:
+`if` và `for` không phải là expression trong JavaScript, do vậy không dùng trực tiếp trong JSX được, mà hãy xử lý trước khi đưa vào JSX như bên dưới:
 
 ```js{3-7}
 function NumberDescriber(props) {
@@ -196,7 +196,7 @@ function NumberDescriber(props) {
 }
 ```
 
-You can learn more about [conditional rendering](/docs/conditional-rendering.html) and [loops](/docs/lists-and-keys.html) in the corresponding sections.
+Đọc bài sau để biết thêm về [render theo điều kiện](/docs/conditional-rendering.html) và [vòng lặp](/docs/lists-and-keys.html).
 
 ### String Literals
 
@@ -218,9 +218,9 @@ When you pass a string literal, its value is HTML-unescaped. So these two JSX ex
 
 This behavior is usually not relevant. It's only mentioned here for completeness.
 
-### Props Default to "True"
+### Giá trị mặc định của Props là "True"
 
-If you pass no value for a prop, it defaults to `true`. These two JSX expressions are equivalent:
+Nếu không nói gì (không truyền giá trị cho props), thì props sẽ mặc định bằng `true`. Hai đoạn code sau là tương đương:
 
 ```js
 <MyTextBox autocomplete />

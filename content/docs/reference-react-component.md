@@ -15,7 +15,11 @@ redirect_from:
   - "tips/use-react-with-other-libraries.html"
 ---
 
-[Components](/docs/components-and-props.html) let you split the UI into independent, reusable pieces, and think about each piece in isolation. `React.Component` is provided by [`React`](/docs/react-api.html).
+Khi sử dụng component, bạn có thể chia UI ra thành những mảnh độc lập, có khả năng tái sử dụng, và thao tác với từng mảnh một cách biệt lập.
+
+Về tư tưởng, component giống như hàm trong JavaScript. Nó nhận tham số đầu vào (gọi là "props") và trả về các React element mô tả những gì cần xuất hiện trên màn hình.
+
+Khi sử dụng [components](/docs/components-and-props.html), ta có thể chia UI thành những mảnh độc lập, có khả năng tái sử dụng, và thao tác với từng mảnh một cách riêng rẽ.  `React.Component` được cung cấp bởi [`React`](/docs/react-api.html).
 
 ## Overview
 
@@ -37,11 +41,15 @@ Note that **we don't recommend creating your own base component classes**. Code 
 
 ### The Component Lifecycle
 
-Each component has several "lifecycle methods" that you can override to run code at particular times in the process. Methods prefixed with **`will`** are called right before something happens, and methods prefixed with **`did`** are called right after something happens.
+Mỗi component có một vài "lifecycle methods" that you can override to run code at particular times in the process. 
+- Method với "tiền tố" **`will`**: được gọi NGAY TRƯỚC khi một cái gì đó xảy ra.
+- Method với "hậu tố" **`did`**: được gọi NGAY SAU khi cái gì đó xảy ra. 
+
+Cái gì đó là gì thì xin đọc tiếp phần dưới.
 
 #### Mounting
 
-These methods are called when an instance of a component is being created and inserted into the DOM:
+Những method sau được gọi khi 1 instance của 1 component đang được tạo và chèn vào DOM:
 
 - [`constructor()`](#constructor)
 - [`componentWillMount()`](#componentwillmount)
@@ -50,7 +58,7 @@ These methods are called when an instance of a component is being created and in
 
 #### Updating
 
-An update can be caused by changes to props or state. These methods are called when a component is being re-rendered:
+Khi có thay đổi ở props hoặc state, thì component sẽ được cập nhật. Những method sau sẽ được gọi khi một component được render lại.
 
 - [`componentWillReceiveProps()`](#componentwillreceiveprops)
 - [`shouldComponentUpdate()`](#shouldcomponentupdate)
@@ -60,15 +68,17 @@ An update can be caused by changes to props or state. These methods are called w
 
 #### Unmounting
 
-This method is called when a component is being removed from the DOM:
+Method này sẽ được gọi khi một component bị loại bỏ khỏi DOM:
 
 - [`componentWillUnmount()`](#componentwillunmount)
 
 #### Error Handling
 
-This method is called when there is an error during rendering, in a lifecycle method, or in the constructor of any child component.
+Method [`componentDidCatch()`](#componentdidcatch) sau được gọi khi có lỗi xảy ra ở một trong các tình huông sau ở bất kỳ component con nào:
+  - trong quá trình render
+  - trong khi một lifecylce method đang được thực thi
+  - trong quá trình của constructor
 
-- [`componentDidCatch()`](#componentdidcatch)
 
 ### Other APIs
 
@@ -155,15 +165,17 @@ render() {
 constructor(props)
 ```
 
-The constructor for a React component is called before it is mounted. When implementing the constructor for a `React.Component` subclass, you should call `super(props)` before any other statement. Otherwise, `this.props` will be undefined in the constructor, which can lead to bugs.
+Constructor của một component trong React được gọi trước khi component đó kết thúc quá trình mount.Khi thực thi constructor cho một class con của `React.Component`, bạn cần gọi `super(props)` ngay ở đầu trước khi nghĩ đến những thứ khác. Nếu không `this.props` sẽ trở thành `undefined` bên trong constructor,  dẫn đến lỗi.
 
-Avoid introducing any side-effects or subscriptions in the constructor. For those use cases, use `componentDidMount()` instead.
+Hãy tránh đưa vào bất kỳ "side-effects" hoặc "subscriptions" bên trong constructor. Nếu cần, hãy dùng `componentDidMount()`.
 
-The constructor is the right place to initialize state. To do so, just assign an object to `this.state`; don't try to call `setState()` from the constructor. The constructor is also often used to bind event handlers to the class instance.
+Constructor:
+- là nơi phù hợp nhất để khởi tạo state. Để làm thế, chỉ cần gán một object cho `this.state`; đừng gọi `setState()` bên trong constructor.
+- thường được dùng để bind các event handler vào instance của class.
 
-If you don't initialize state and you don't bind methods, you don't need to implement a constructor for your React component.
+Một khi không định khởi tạo state cũng như không bind các method thì không cần phải tạo constructor làm gì.
 
-In rare cases, it's okay to initialize state based on props. This effectively "forks" the props and sets the state with the initial props. Here's an example of a valid `React.Component` subclass constructor:
+Trong một vài trường hợp hãn hữu thì cũng có thể khởi tạo state dựa vào props. Đây là cách hiệu quả để "fork" props và đặt state bằng với giá trị ban đầu của props. Xem ví dụ dưới đây: 
 
 ```js
 constructor(props) {
@@ -173,10 +185,9 @@ constructor(props) {
   };
 }
 ```
+Hãy lưu ý với các viết trên ở chỗ là state sẽ không cập nhật song hành với props. Thay vì đồng bộ props với state, bạn nên tính đến dùng cách trình bày trong bài ["lift the state up"](/docs/lifting-state-up.html).
 
-Beware of this pattern, as state won't be up-to-date with any props update. Instead of syncing props to state, you often want to [lift the state up](/docs/lifting-state-up.html) instead.
-
-If you "fork" props by using them for state, you might also want to implement [`componentWillReceiveProps(nextProps)`](#componentwillreceiveprops) to keep the state up-to-date with them. But lifting state up is often easier and less bug-prone.
+Nếu bạn không "fork" props thông qua việc gán props vào state, bạn có thể sẽ muốn dùng method [`componentWillReceiveProps(nextProps)`](#componentwillreceiveprops) để giúp state thay đổi khi props thay đổi. Tuy thế, "lifting state up" thường dễ hơn và ít lỗi hơn.
 
 * * *
 
@@ -186,11 +197,11 @@ If you "fork" props by using them for state, you might also want to implement [`
 componentWillMount()
 ```
 
-`componentWillMount()` is invoked just before mounting occurs. It is called before `render()`, therefore calling `setState()` synchronously in this method will not trigger an extra rendering. Generally, we recommend using the `constructor()` instead.
+Method `componentWillMount()` được gọi ngay trước khi quá trình mount diễn ra, trước cả `render()`. Vì thế, việc gọi `setState()` luôn bên trong method này sẽ không gây ra việc render lần nữa. Thông thường, chúng tôi khuyến cáo sử dụng `constructor()` hơn là method này.
 
-Avoid introducing any side-effects or subscriptions in this method. For those use cases, use `componentDidMount()` instead.
+Hãy tránh đưa vào bất kỳ "side-effects" hoặc "subscriptions" bên trong constructor. Nếu cần, hãy dùng `componentDidMount()`.
 
-This is the only lifecycle hook called on server rendering.
+Đây là "lifecycle hook" duy nhất được gọi trong quá trình server rendering.
 
 * * *
 
@@ -200,11 +211,11 @@ This is the only lifecycle hook called on server rendering.
 componentDidMount()
 ```
 
-`componentDidMount()` is invoked immediately after a component is mounted. Initialization that requires DOM nodes should go here. If you need to load data from a remote endpoint, this is a good place to instantiate the network request.
+`componentDidMount()` được gọi ngay lập tức sau khi một component hoàn tất vụ mount. Quá trình khởi tạo cần node của DOM nên được để ở đây. Nếu muốn lấy dữ liệu từ chỗ nào đó không phải local, thì đây là chỗ thích hợp để tạo một network request.
 
-This method is a good place to set up any subscriptions. If you do that, don't forget to unsubscribe in `componentWillUnmount()`.
+Method này cũng là nơi dành cho việc thiết lập bất kỳ subscription nào. Nếu có subscription ở đây, đừng quên "unscribe" nó ở `componentWillUnmount()`.
 
-Calling `setState()` in this method will trigger an extra rendering, but it will happen before the browser updates the screen. This guarantees that even though the `render()` will be called twice in this case, the user won't see the intermediate state. Use this pattern with caution because it often causes performance issues. It can, however, be necessary for cases like modals and tooltips when you need to measure a DOM node before rendering something that depends on its size or position.
+Gọi `setState()` ở bên trong method này sẽ khiến cho componet bị render lần nữa, nhưng việc này sẽ xảy ra trước khi trình duyệt cập nhật màn hình. Do vậy, cho dù `render()` bị gọi 2 lần thì người dùng cũng không phát hiện ra. Hãy dùng cách viết code này với sự thận trọng bởi nó thường gây ra vấn đề liên quan đến hiệu suất. Tuy nhiên, vẫn có trường hợp cần sử dụng method này, ví dụ với model hoặc tooltip, bởi ta cần component được render ra trước, rồi dựa vào thông tin về DOM node vừa sinh ra (ví dụ như kích thước, vị trí) để có hành động tiếp theo.
 
 * * *
 
@@ -214,11 +225,11 @@ Calling `setState()` in this method will trigger an extra rendering, but it will
 componentWillReceiveProps(nextProps)
 ```
 
-`componentWillReceiveProps()` is invoked before a mounted component receives new props. If you need to update the state in response to prop changes (for example, to reset it), you may compare `this.props` and `nextProps` and perform state transitions using `this.setState()` in this method.
+`componentWillReceiveProps()` được gọi trước khi một component (vốn đã mount xong) nhận props mới. Nếu bạn capaf cập nhật state cho phù hợp với thay đổi của props (ví dụ reset state), bạn có thể so sánh `this.props` và `nextProps`, rồi gọi `this.setState()` bên trong method `componentWillReceiveProps()` này.
 
-Note that React will call this method even if the props have not changed, so make sure to compare the current and next values if you only want to handle changes. This may occur when the parent component causes your component to re-render.
+Lưu ý là React vẫn sẽ gọi method này ngay cả khi props không thay đổi, vì thế, hãy đảm bảo việc so sánh các "current" và "next" value nếu bạn chỉ muốn xử lý các trường hợp có thay đổi. This may occur when the parent component causes your component to re-render.
 
-React doesn't call `componentWillReceiveProps()` with initial props during [mounting](#mounting). It only calls this method if some of component's props may update. Calling `this.setState()` generally doesn't trigger `componentWillReceiveProps()`.
+React không gọi `componentWillReceiveProps()` với giá trị ban đầu của props trong [quá trình mount](#mounting). React chỉ gọi method này nếu có thay đổi nào đó trong các props của component. Gọi `this.setState()` thường không kéo theo `componentWillReceiveProps()`.
 
 * * *
 
@@ -228,9 +239,9 @@ React doesn't call `componentWillReceiveProps()` with initial props during [moun
 shouldComponentUpdate(nextProps, nextState)
 ```
 
-Use `shouldComponentUpdate()` to let React know if a component's output is not affected by the current change in state or props. The default behavior is to re-render on every state change, and in the vast majority of cases you should rely on the default behavior.
+Sử dụng `shouldComponentUpdate()` để báo React biết nếu kết quả trả về của 1 component không phụ thuộc vào thay đổi của state hay props. Cơ chế mặc định là component sẽ render lại khi có thay đổi ở state, và trong phần lớn các trường hợp ta nên sử dụng cơ chế này.
 
-`shouldComponentUpdate()` is invoked before rendering when new props or state are being received. Defaults to `true`. This method is not called for the initial render or when `forceUpdate()` is used.
+`shouldComponentUpdate()` được gọi trước khi render, khi mà component nhận được props hoặc state mới. Defaults to `true`. This method is not called for the initial render or when `forceUpdate()` is used.
 
 Returning `false` does not prevent child components from re-rendering when *their* state changes.
 
