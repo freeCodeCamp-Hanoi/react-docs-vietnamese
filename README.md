@@ -6,4 +6,4 @@
 
 ### Danh sách các bài đã/ đang được dịch
 
-- [Tư duy trong React]()
+- [Tư duy trong React](https://github.com/freeCodeCamp-Hanoi/react-docs-vietnamese/blob/master/content/docs/thinking-in-react.md)
