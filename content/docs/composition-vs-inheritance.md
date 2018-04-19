@@ -7,17 +7,31 @@ prev: lifting-state-up.html
 next: thinking-in-react.html
 ---
 
-React has a powerful composition model, and we recommend using composition instead of inheritance to reuse code between components.
+**Ghi chú**: 
+- Link bài gốc: Xem tại [đây](https://reactjs.org/docs/composition-vs-inheritance.html)
+- Với người tiếp xúc đầu tiên với JavaScript nói riêng và front-end development nói chung, "**composition**" và "**inheritance**" là hai khái niệm không hiểu được. "Inheritance" có thể được dịch là "kế thừa". Những phần này, có thể được hiểu dần thông qua thực hành, kết hợp với đọc những bài sau:
+  - bài về [Class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) trong JavaScript trên Mozilla MDN.
+  - bài "[Composition so với inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance)" trên Wikipedia. 
+- Với phần này, tạm bỏ "Inheritance" ra khỏi đầu, chỉ tập trung cảm nhận "Composition" hoạt động như thế nào, làm việc/ tạo ra nó ra sao. 
+---
 
-In this section, we will consider a few problems where developers new to React often reach for inheritance, and show how we can solve them with composition.
 
-## Containment
+React sử dụng model với kỹ thuật "composition" mạnh mẽ, và chúng tôi khuyến cáo dùng kỹ thuật này hơn là dùng "inheritance" nhằm tái sử dụng code giữa các component.
 
-Some components don't know their children ahead of time. This is especially common for components like `Sidebar` or `Dialog` that represent generic "boxes".
+Trong phần này, ta sẽ cùng xem một vài vấn đề mà lập trình viên khi mới học React thường nghĩ ngay đến "inheritance", để rồi chỉ ra rằng ta hoàn toàn có thể giải quyết với kỹ thuật "composition". 
+
+## Cô lập hóa
+
+Có những component không hề biết trước các component con của nó sẽ là gì, ví dụ như component `Sidebar` hoặc `Dialog` vốn đơn giản chỉ là những chiếc "hộp".
+
+Facebook khuyến cáo những component kiểu này nên sử dụng prop đặc biệt `children` để truyền trực tiếp những phần tử con vào đầu ra:
 
 We recommend that such components use the special `children` prop to pass children elements directly into their output:
 
-```js{4}
+
+Ví dụ với component `FancyBorder` và `WelcomeDialog` dưới đây: 
+
+```js
 function FancyBorder(props) {
   return (
     <div className={'FancyBorder FancyBorder-' + props.color}>
@@ -27,9 +41,7 @@ function FancyBorder(props) {
 }
 ```
 
-This lets other components pass arbitrary children to them by nesting the JSX:
-
-```js{4-9}
+```js
 function WelcomeDialog() {
   return (
     <FancyBorder color="blue">
@@ -46,11 +58,11 @@ function WelcomeDialog() {
 
 [Try it on CodePen.](https://codepen.io/gaearon/pen/ozqNOV?editors=0010)
 
-Anything inside the `<FancyBorder>` JSX tag gets passed into the `FancyBorder` component as a `children` prop. Since `FancyBorder` renders `{props.children}` inside a `<div>`, the passed elements appear in the final output.
+Bên trong `WelcomeDialog`, Bất kỳ thứ gì kẹp giữa JSX tag `<FancyBorder>` và `</FancyBorder>` sẽ được truyền vào cho component `FancyBorder`. Component này sẽ nhận thông tin truyền vào như là prop `children` của mình. Bởi `FancyBorder` render `{props.children}` bên trong một `<div>`, thông tin kia sẽ xuất hiện trong kết quả HTML trả về.
 
-While this is less common, sometimes you might need multiple "holes" in a component. In such cases you may come up with your own convention instead of using `children`:
+Ngoài ra, trường hợp bên dưới đây có thể ít phổ biến hơn, nhưng sẽ có lúc bạn cần một vài "lỗ trống" trong component của mình. Trong những trường hợp này, bạn sẽ cần sử dụng cách viết truyền thóng thay vì sử dụng `children`:
 
-```js{5,8,18,21}
+```js
 function SplitPane(props) {
   return (
     <div className="SplitPane">
@@ -79,15 +91,15 @@ function App() {
 
 [Try it on CodePen.](https://codepen.io/gaearon/pen/gwZOJp?editors=0010)
 
-React elements like `<Contacts />` and `<Chat />` are just objects, so you can pass them as props like any other data. This approach may remind you of "slots" in other libraries but there are no limitations on what you can pass as props in React.
+Những React element như `<Contacts />` và `<Chat />` chỉ đơn thuần là object, vì vậy ta có thể truyền chúng dưới dạng props như bất kỳ data nào khác. Cách viết này có lẽ làm bạn liên tưởng đến khái niệm "slots" ở trong các thư viện khác. Nhưng ở trong React, sẽ không có giới hạn nào với việc bạn truyền gì vào props.
 
-## Specialization
+## Chuyên môn hóa
 
-Sometimes we think about components as being "special cases" of other components. For example, we might say that a `WelcomeDialog` is a special case of `Dialog`.
+Cũng có lúc ta coi component này là trường hợp đặc biệt của component kia. Ví dụ, ta có thể nói `WelcomeDialog` là trường hợp đặc biệt của `Dialog`.
 
-In React, this is also achieved by composition, where a more "specific" component renders a more "generic" one and configures it with props:
+Trong React, việc này đạt được thông qua một kỹ thuật tên là "composition". Kỹ thuật này giúp một component "đặc biệt" (chính là `WelcomeDialog`) render một component "tổng quát" (chính là `Dialog`), cấu hình component tổng quát này với props:
 
-```js{5,8,16-18}
+```js
 function Dialog(props) {
   return (
     <FancyBorder color="blue">
@@ -112,9 +124,9 @@ function WelcomeDialog() {
 
 [Try it on CodePen.](https://codepen.io/gaearon/pen/kkEaOZ?editors=0010)
 
-Composition works equally well for components defined as classes:
+Kỹ thuật "composition" kết hợp hoàn hảo với các component dạng class:
 
-```js{10,27-31}
+```js
 function Dialog(props) {
   return (
     <FancyBorder color="blue">
@@ -162,10 +174,13 @@ class SignUpDialog extends React.Component {
 
 [Try it on CodePen.](https://codepen.io/gaearon/pen/gwZbYa?editors=0010)
 
-## So What About Inheritance?
+## Vậy còn kỹ thuật "Inheritance" thì sao?
 
-At Facebook, we use React in thousands of components, and we haven't found any use cases where we would recommend creating component inheritance hierarchies.
+Tại Facebook, chúng tôi sử dụng React trong hàng ngàn components, nhưng chưa tìm thấy trường hợp nào cần tạo component thông qua kỹ thuật "inheritance hierarchies".
 
-Props and composition give you all the flexibility you need to customize a component's look and behavior in an explicit and safe way. Remember that components may accept arbitrary props, including primitive values, React elements, or functions.
+Props và kỹ thuật "composition" đã cho ta mọi sự linh hoạt cần thiết để tùy biến một component, cả vẻ bề ngoài lẫn khả năng tương tác, vừa tường minh, vừa an toàn. Hãy nhớ rằng component có thể nhập props bất kỳ:
+- một giá trị dạng primitive JS (như number, string, object, v.v.)
+- một React element
+- hay là một function.
 
-If you want to reuse non-UI functionality between components, we suggest extracting it into a separate JavaScript module. The components may import it and use that function, object, or a class, without extending it.
+Nếu bạn muốn tải sử dụng những tính năng không liên quan đến giao diện giữa các component, chúng tôi gợi ý nên tách riêng những tính năng đó sang các module JavaScript độc lập. Khi muốn dùng tính năng ấy, ta chỉ cần import các module kia, rồi dùng các function, object, hay class mà không phải viết lại.
