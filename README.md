@@ -6,4 +6,5 @@
 
 ### Danh sách các bài đã/ đang được dịch
 
+- [Composition hay Inheritance](https://github.com/freeCodeCamp-Hanoi/react-docs-vietnamese/blob/master/content/docs/composition-vs-inheritance.md)
 - [Tư duy trong React](https://github.com/freeCodeCamp-Hanoi/react-docs-vietnamese/blob/master/content/docs/thinking-in-react.md)
